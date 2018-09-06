@@ -32,6 +32,10 @@ namespace SimpleBot
 
             var message = new Message(userFromId, userFromName, text);
 
+            var mongoDb = new Repository.MongoDb();
+            mongoDb.SaveMessage(message);
+            mongoDb.SaveActivity(activity);
+
             string response = SimpleBotUser.Reply(message);
 
             await ReplyUserAsync(activity, response);
