@@ -26,15 +26,14 @@ namespace SimpleBot
         // Estabelece comunicação entre o usuário e o SimpleBotUser
         async Task HandleActivityAsync(Activity activity)
         {
+            var mongoDb = new Repository.MongoDb();
+            mongoDb.SaveActivity(activity);
+
             string text = activity.Text;
             string userFromId = activity.From.Id;
             string userFromName = activity.From.Name;
 
             var message = new Message(userFromId, userFromName, text);
-
-            var mongoDb = new Repository.MongoDb();
-            mongoDb.SaveMessage(message);
-            mongoDb.SaveActivity(activity);
 
             string response = SimpleBotUser.Reply(message);
 

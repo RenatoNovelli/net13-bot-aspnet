@@ -15,13 +15,7 @@ namespace SimpleBot.Repository
         public MongoDb()
         {
             var client = new MongoClient(ConfigurationManager.AppSettings["connectionString"]);
-            _database = client.GetDatabase("test");
-        }
-
-        public void SaveMessage(Message document)
-        {
-            var coll = _database.GetCollection<Message>("message");
-            coll.InsertOne(document);
+            _database = client.GetDatabase("bot");
         }
 
         internal void SaveActivity(Activity activity)
