@@ -142,7 +142,6 @@
     <Compile Include="Logic\UserProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repository\MongoDb.cs" />
-    <Compile Include="Repository\ObjectDb.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />

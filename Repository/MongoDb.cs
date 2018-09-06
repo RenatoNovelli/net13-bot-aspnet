@@ -1,10 +1,7 @@
 ﻿using Microsoft.Bot.Connector;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Web;
 
 namespace SimpleBot.Repository
 {
@@ -22,6 +19,27 @@ namespace SimpleBot.Repository
         {
             var coll = _database.GetCollection<Activity>("activity");
             coll.InsertOne(activity);
+        }
+
+        internal void SaveUserProfile(UserProfile userProfile)
+        {
+            var coll = _database.GetCollection<UserProfile>("user_profile");
+
+            var filter = Builders<UserProfile>.Filter.Where(x => x.Id == userProfile.Id);
+            coll.ReplaceOne(filter, userProfile);
+        }
+
+        internal UserProfile GetUserProfile(string userId)
+        {
+            var coll = _database.GetCollection<UserProfile>("user_profile");
+            var filter = Builders<UserProfile>.Filter.Eq(x => x.Id, userId);
+            return coll.Find(filter).FirstOrDefault();
+        }
+
+        internal void CreateUserProfile(UserProfile userProfile)
+        {
+            var coll = _database.GetCollection<UserProfile>("user_profile");
+            coll.InsertOne(userProfile);
         }
     }
 }

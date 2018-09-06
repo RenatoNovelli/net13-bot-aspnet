@@ -11,9 +11,20 @@ namespace SimpleBot
     {
         public static string Reply(Message message)
         {
+            var profile = GetProfile(message.Id);
+
+            if (profile == null)
+            {
+                profile = CreateProfile(new UserProfile { Id = message.Id });
+            }
+
+            profile.Visitas++;
+
+            SetProfile(profile);
+
             SaveMessage(message);
 
-            return $"{message.User} disse '{message.Text}'";
+            return $"{message.User} disse '{message.Text}' e mandou {profile.Visitas} requisições";
         }
 
         private static void SaveMessage(Message message)
@@ -34,11 +45,21 @@ namespace SimpleBot
 
         public static UserProfile GetProfile(string id)
         {
-            return null;
+            var mongoDb = new Repository.MongoDb();
+            return mongoDb.GetUserProfile(id);
         }
 
-        public static void SetProfile(string id, UserProfile profile)
+        public static void SetProfile(UserProfile profile)
         {
+            var mongoDb = new Repository.MongoDb();
+            mongoDb.SaveUserProfile(profile);
+        }
+
+        public static UserProfile CreateProfile(UserProfile profile)
+        {
+            var mongoDb = new Repository.MongoDb();
+            mongoDb.CreateUserProfile(profile);
+            return profile;
         }
     }
 }
