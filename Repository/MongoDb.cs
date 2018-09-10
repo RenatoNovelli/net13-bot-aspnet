@@ -1,5 +1,6 @@
 ﻿using Microsoft.Bot.Connector;
 using MongoDB.Driver;
+using SimpleBot.Logic;
 using System.Configuration;
 using System.Linq;
 

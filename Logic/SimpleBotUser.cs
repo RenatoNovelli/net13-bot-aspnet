@@ -1,26 +1,25 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Driver;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+using SimpleBot.Repository;
 
-namespace SimpleBot
+namespace SimpleBot.Logic
 {
-    public class SimpleBotUser
+    public static class SimpleBotUser
     {
+        static IUserProfileRepository _userProfile;
+
+        static SimpleBotUser()
+        {
+            _userProfile = new UserProfileMongoRepo();
+        }
+
         public static string Reply(Message message)
         {
-            var profile = GetProfile(message.Id);
-
-            if (profile == null)
-            {
-                profile = CreateProfile(new UserProfile { Id = message.Id });
-            }
+            var profile = _userProfile.GetProfile(message.Id);
 
             profile.Visitas++;
 
-            SetProfile(profile);
+            _userProfile.SetProfile(profile);
 
             SaveMessage(message);
 
