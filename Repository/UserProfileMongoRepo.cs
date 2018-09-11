@@ -2,41 +2,47 @@
 using System.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using SimpleBot.Entity.Mongo;
 using SimpleBot.Logic;
+using SimpleBot.Logic.Interfaces;
 
 namespace SimpleBot.Repository
 {
     public class UserProfileMongoRepo : IUserProfileRepository
     {
-        private IMongoCollection<UserProfileMongo> _collection;
+        private IMongoCollection<UserProfileMongo> _collectionProfile;
 
         public UserProfileMongoRepo()
         {
-            var client = new MongoClient(ConfigurationManager.AppSettings["connectionString"]);
+            var client = new MongoClient(ConfigurationManager.AppSettings["mongoConnectionString"]);
             var db = client.GetDatabase("bot");
-            var collection = db.GetCollection<UserProfileMongo>("profile");
+            var collectionProfile = db.GetCollection<UserProfileMongo>("profile");
 
-            this._collection = collection;
+            this._collectionProfile = collectionProfile;
         }
 
         public UserProfile GetProfile(string id)
         {
+            var userProfile = new UserProfile
+            {
+                Id = id
+            };
+
             var filter = new BsonDocument { { "_id", new BsonDocument { { "$eq", id } } } };
 
-            var cursor = _collection.Find(filter);
+            var cursor = _collectionProfile.Find(filter);
 
             var profile = cursor.FirstOrDefault();
 
-            return new UserProfile
-            {
-                Id = profile._id,
-                Visitas = profile.Visitas
-            };
+            userProfile.Visitas = profile != null ? profile.Visitas : 0;
+
+            return userProfile;
+
         }
 
         public void SetProfile(UserProfile profile)
         {
-            var filter = new BsonDocument { { "_id", new BsonDocument { { "$eq", profile.Id } } } };
+            var filter = Builders<UserProfileMongo>.Filter.Where(x => x._id == profile.Id);
 
             var doc = new UserProfileMongo
             {
@@ -44,7 +50,7 @@ namespace SimpleBot.Repository
                 Visitas = profile.Visitas
             };
 
-            _collection.ReplaceOne(filter, doc, new UpdateOptions { IsUpsert = true });
+            _collectionProfile.ReplaceOne(filter, doc, new UpdateOptions { IsUpsert = true });
         }
     }
 }

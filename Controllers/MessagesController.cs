@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using System.Web.Http;
 using System.Web.Http.Description;
 using Microsoft.Bot.Connector;
+using SimpleBot.Logic;
 
 namespace SimpleBot
 {
@@ -26,9 +27,6 @@ namespace SimpleBot
         // Estabelece comunicação entre o usuário e o SimpleBotUser
         async Task HandleActivityAsync(Activity activity)
         {
-            var mongoDb = new Repository.MongoDb();
-            mongoDb.SaveActivity(activity);
-
             string text = activity.Text;
             string userFromId = activity.From.Id;
             string userFromName = activity.From.Name;
